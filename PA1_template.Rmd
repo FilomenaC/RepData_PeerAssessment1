@@ -1,25 +1,161 @@
 ---
 title: "Reproducible Research: Peer Assessment 1"
 output: 
-  html_document:
-    keep_md: true
+  html_document: 
+    keep_md: yes
 ---
+```{r global_options, echo=TRUE}
+knitr::opts_chunk$set( fig.path='Figs/',
+                      echo=TRUE,warning=FALSE, message=FALSE)
+```
+## Loading library and preprocessing the data
 
+```{r}
+library(plyr)
+library(dplyr)
+library(ggplot2)
+activity<-read.csv("activity.csv",header = TRUE)
+```
 
-## Loading and preprocessing the data
+```{r}
 
+str(activity)
+```
+Convert the date variable from Factor to Date variable
+```{r}
+activity$date<-as.Date(activity$date)
+
+```
 
 
 ## What is mean total number of steps taken per day?
-
-
-
+Compute the data needed for the plot
+```{r}
+tot.steps.day<-group_by(activity,date)%>%summarise(total.steps=sum(steps))
+head(tot.steps.day)
+```
+Plot the data on histogram Q1.1
+```{r Histogram Total Number of steps per day}
+hist(tot.steps.day$total.steps,
+     breaks=50,
+     main="Total Number of steps per day",
+     xlab="Total steps per day",
+     ylab="count",
+     col="blue")
+```
+Calculate the mean and median of total number of steps per day, Q1.2
+```{r}
+steps.avg.day<-mean(tot.steps.day$total.steps,na.rm = TRUE)
+steps.median.day<-median(tot.steps.day$total.steps,na.rm = TRUE)
+```
+```{r}
+steps.avg.day
+steps.median.day
+```
 ## What is the average daily activity pattern?
+Compute the data needed for the plot
+```{r}
+avg.steps.interval<-group_by(activity,interval)%>%summarise(average.steps=mean(steps,na.rm=TRUE))
+```
+Plot the requested data, Q2.1
+```{r Time series plot Average Number of steps per interval}
+plot(avg.steps.interval$interval,avg.steps.interval$average.steps,
+     type="l",
+     xlab="Intervals",
+     ylab="Average number of steps",
+     main="Average Number of Steps per Intervals",
+     col="dark green")
+```
+Interval with max number of steps, Q2.2
+```{r}
+max.steps.int<-which.max(avg.steps.interval$average.steps)
+interval.max.steps<-avg.steps.interval[max.steps.int,1]
+```
 
-
+```{r}
+interval.max.steps
+```
+8:35 is the 5-minute interval on average with the maximum number of steps
 
 ## Imputing missing values
+Total number of missing values in the dataset
+```{r}
+table(complete.cases(activity))
+```
+Create a new data frame and impute missing values using average steps per 5 min-interval 
+```{r}
+imput.activity<-activity
+imput.activity$steps<-ifelse(is.na(imput.activity$steps),
+                             avg.steps.interval$average.steps[match(imput.activity$interval,
+                                avg.steps.interval$interval)],
+                                imput.activity$steps)
+```
+```{r}
+table(complete.cases(imput.activity))
+```
+Compute total number of steps per day with the imputed missing values
+```{r}
+imput.tot.steps.day<-group_by(imput.activity,date)%>%summarise(total.steps=sum(steps))
+```
 
+```{r}
+head(imput.tot.steps.day)
+```
+Plot the data on histogram, Q3.4
+```{r Total number of steps per day (NAs imputed) } 
+hist(imput.tot.steps.day$total.steps,
+     breaks=50,
+     main="Total number of steps per day (NAs imputed)",
+     xlab="Total steps per day",
+     ylab="count",
+     col="red")
+```
+Report Mean and Median with the imputed missing values
+```{r}
+imput.steps.avg.day<-mean(imput.tot.steps.day$total.steps)
+imput.steps.median.day<-median(imput.tot.steps.day$total.steps)
+```
 
+```{r}
+imput.steps.avg.day
+```
+
+```{r}
+imput.steps.median.day
+```
+The average and median steps by day are not affected by the adopted imputation of the NA values approach.
+The distribution of the total nr of steps per day becomes a closer approximation of a Gaussian distribution.
 
 ## Are there differences in activity patterns between weekdays and weekends?
+Identify the day of the week variable from the imput.activity data frame and then create a weekday or weekend variable
+```{r}
+imput.activity$day<-weekdays(imput.activity$date)
+w.day<-c("Monday","Tuesdya","Wednesday","Thursday","Friday")
+w.end<-c("Saturday","Sunday")
+imput.activity$weekpart<-ifelse(imput.activity$day %in% w.day,"weekday","weekend")
+```
+
+```{r}
+head(imput.activity)
+```
+```{r}
+table(imput.activity$weekpart)
+```
+Group_by data by interval and type of weekday/end 
+```{r}
+avg.steps.wday.wend<-group_by(imput.activity,interval,weekpart)%>%summarise(average.steps=mean(steps))
+```
+
+```{r}
+head(avg.steps.wday.wend)
+```
+
+Plotting the  weekday and weekend average steps per intervals
+```{r}
+avg.steps.wday.wend.plot<-ggplot(avg.steps.wday.wend,aes(interval,average.steps))
+avg.steps.wday.wend.plot<-avg.steps.wday.wend.plot+geom_line()+facet_grid(weekpart~.)
+```
+Average activity steps are higher on weekday days than weekend days
+```{r Plot average number of steps weekday and weekend}
+print(avg.steps.wday.wend.plot)
+```
