@@ -5,8 +5,7 @@ output:
     keep_md: yes
 ---
 ```{r global_options, echo=TRUE}
-knitr::opts_chunk$set( fig.path='Figs/',
-                      echo=TRUE,warning=FALSE, message=FALSE)
+knitr::opts_chunk$set(echo=TRUE,warning=FALSE, message=FALSE)
 ```
 ## Loading library and preprocessing the data
 

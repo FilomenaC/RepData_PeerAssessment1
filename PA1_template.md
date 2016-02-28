@@ -1,8 +1,7 @@
 # Reproducible Research: Peer Assessment 1
 
 ```r
-knitr::opts_chunk$set( fig.path='Figs/',
-                      echo=TRUE,warning=FALSE, message=FALSE)
+knitr::opts_chunk$set(echo=TRUE,warning=FALSE, message=FALSE)
 ```
 ## Loading library and preprocessing the data
 
@@ -63,7 +62,7 @@ hist(tot.steps.day$total.steps,
      col="blue")
 ```
 
-![](Figs/Histogram Total Number of steps per day-1.png)\
+![](PA1_template_files/figure-html/Histogram Total Number of steps per day-1.png)\
 Calculate the mean and median of total number of steps per day, Q1.2
 
 ```r
@@ -103,7 +102,7 @@ plot(avg.steps.interval$interval,avg.steps.interval$average.steps,
      col="dark green")
 ```
 
-![](Figs/Time series plot Average Number of steps per interval-1.png)\
+![](PA1_template_files/figure-html/Time series plot Average Number of steps per interval-1.png)\
 Interval with max number of steps, Q2.2
 
 ```r
@@ -190,7 +189,7 @@ hist(imput.tot.steps.day$total.steps,
      col="red")
 ```
 
-![](Figs/Total number of steps per day (NAs imputed)-1.png)\
+![](PA1_template_files/figure-html/Total number of steps per day (NAs imputed)-1.png)\
 Report Mean and Median with the imputed missing values
 
 ```r
@@ -289,4 +288,4 @@ Average activity steps are higher on weekday days than weekend days
 print(avg.steps.wday.wend.plot)
 ```
 
-![](Figs/Plot average number of steps weekday and weekend-1.png)\
+![](PA1_template_files/figure-html/Plot average number of steps weekday and weekend-1.png)\
