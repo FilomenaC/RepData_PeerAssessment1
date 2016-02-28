@@ -62,7 +62,8 @@ hist(tot.steps.day$total.steps,
      col="blue")
 ```
 
-![](PA1_template_files/figure-html/Histogram Total Number of steps per day-1.png)\
+![](https://github.com/FilomenaC/RepData_PeerAssessment1/blob/master/PA1_template_files/figure-html/Histogram.Total.Number.of.steps.per.day-1.png)
+\
 Calculate the mean and median of total number of steps per day, Q1.2
 
 ```r
